@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -15,8 +16,10 @@ import {
 } from '@react-navigation/native-stack';
 import {RootStackParams} from '../../navigations';
 import {mvs} from 'react-native-size-matters';
-import {DetailCard, LoadingIndicator, TopNavigation} from '../../components';
+import {Gap, LoadingIndicator, TopNavigation} from '../../components';
 import {useDetailDataHook} from '../../hooks/use-dataDetail.hook';
+import FastImage from 'react-native-fast-image';
+import {StarIcon} from '../../assets/icon';
 
 type PostDetailProps = NativeStackScreenProps<RootStackParams, 'DetailData'>;
 
@@ -41,9 +44,32 @@ const DetailData = ({route}: PostDetailProps) => {
         itemStrokeColor={color.Neutral[10]}
       />
       {detailData && (
-        <View style={styles.bodyContainer}>
-          <Text>{detailData.title}</Text>
-        </View>
+        <ScrollView style={styles.bodyContainer}>
+          <FastImage
+            style={{width: '100%', height: 250, borderRadius: 10}}
+            source={{
+              uri: detailData.images.jpg.large_image_url,
+              headers: {Authorization: 'someAuthToken'},
+              priority: FastImage.priority.normal,
+            }}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+          <Gap height={10} />
+          <Text style={styles.titleStyle}>
+            {detailData.title}, {detailData.year}
+          </Text>
+
+          <Gap height={5} />
+          <View style={styles.score}>
+            <StarIcon width={14} height={14} />
+            <Gap width={4} />
+            <Text style={styles.textStyle}>{detailData.score}</Text>
+            <Gap width={4} />
+          </View>
+          <Text style={styles.textStyle}>{detailData.rating}</Text>
+          <Gap height={10} />
+          <Text style={styles.textStyle}>{detailData.background}</Text>
+        </ScrollView>
       )}
       {isLoading && <LoadingIndicator />}
     </View>
@@ -57,11 +83,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: color.Dark[800],
   },
+  titleStyle: {
+    fontSize: mvs(15),
+    fontWeight: 'bold',
+    color: color.Neutral[10],
+  },
   textStyle: {
     fontSize: mvs(13),
     color: color.Neutral[10],
   },
   bodyContainer: {
     padding: widthResponsive(20),
+  },
+  score: {
+    flexDirection: 'row',
   },
 });
