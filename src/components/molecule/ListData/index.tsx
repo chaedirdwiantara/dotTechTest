@@ -6,7 +6,8 @@ import {widthResponsive} from '../../../utils';
 import FastImage from 'react-native-fast-image';
 
 interface ListDataCardProps {
-  data: dataList;
+  imageUrl: string;
+  name: string;
   onPress: () => void;
   disabled?: boolean;
 }
@@ -14,7 +15,7 @@ interface ListDataCardProps {
 const ListDataCard: React.FC<ListDataCardProps> = (
   props: ListDataCardProps,
 ) => {
-  const {data, onPress, disabled = false} = props;
+  const {imageUrl, name, onPress, disabled = false} = props;
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -23,14 +24,14 @@ const ListDataCard: React.FC<ListDataCardProps> = (
       <FastImage
         style={{width: '100%', height: 200, borderRadius: 10}}
         source={{
-          uri: data.images.jpg.image_url,
+          uri: imageUrl,
           headers: {Authorization: 'someAuthToken'},
           priority: FastImage.priority.normal,
         }}
         resizeMode={FastImage.resizeMode.cover}
       />
       <Text style={styles.textStyle} numberOfLines={1}>
-        {data.title}
+        {name}
       </Text>
     </TouchableOpacity>
   );

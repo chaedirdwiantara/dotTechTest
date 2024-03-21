@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {color} from '../../theme';
 import {widthResponsive} from '../../utils';
 import {useNavigation} from '@react-navigation/native';
@@ -16,10 +16,16 @@ import {
 } from '@react-navigation/native-stack';
 import {RootStackParams} from '../../navigations';
 import {mvs} from 'react-native-size-matters';
-import {Gap, LoadingIndicator, TopNavigation} from '../../components';
+import {Button, Gap, LoadingIndicator, TopNavigation} from '../../components';
 import {useDetailDataHook} from '../../hooks/use-dataDetail.hook';
 import FastImage from 'react-native-fast-image';
 import {StarIcon} from '../../assets/icon';
+import {
+  addItemToList,
+  getList,
+  isItemInList,
+  removeItemFromList,
+} from '../../hooks/use-storage.hook';
 
 type PostDetailProps = NativeStackScreenProps<RootStackParams, 'DetailData'>;
 
@@ -28,14 +34,43 @@ const DetailData = ({route}: PostDetailProps) => {
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const {isLoading, isError, detailData, getDetailData, setdetailData} =
     useDetailDataHook();
+
+  const [favorite, setFavorite] = useState<boolean>(false);
+
   useEffect(() => {
     getDetailData({id: route.params.id});
+  }, []);
+
+  useEffect(() => {
+    const checkItemStored = () => {
+      const itemExists = isItemInList(route.params.id);
+      setFavorite(itemExists);
+    };
+
+    checkItemStored();
   }, []);
 
   const leftIconOnPress = () => {
     navigation.goBack();
     setdetailData(undefined);
   };
+
+  const buttonOnPress = () => {
+    if (detailData) {
+      if (favorite) {
+        setFavorite(false);
+        removeItemFromList(route.params.id);
+      } else {
+        setFavorite(true);
+        addItemToList({
+          id: detailData.mal_id,
+          name: detailData.title,
+          imageUrl: detailData?.images.jpg.image_url,
+        });
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TopNavigation.Type1
@@ -68,6 +103,16 @@ const DetailData = ({route}: PostDetailProps) => {
           </View>
           <Text style={styles.textStyle}>{detailData.rating}</Text>
           <Gap height={10} />
+          <View>
+            <Button
+              label={favorite ? 'Favorite' : 'Add To Favorite'}
+              containerStyles={styles.buttonStyle}
+              onPress={buttonOnPress}
+              bgColor={favorite ? color.Primary[400] : color.Secondary[200]}
+            />
+          </View>
+
+          <Gap height={10} />
           <Text style={styles.textStyle}>{detailData.background}</Text>
         </ScrollView>
       )}
@@ -97,5 +142,11 @@ const styles = StyleSheet.create({
   },
   score: {
     flexDirection: 'row',
+  },
+  buttonStyle: {
+    width: widthResponsive(120),
+    height: undefined,
+    aspectRatio: undefined,
+    padding: widthResponsive(8),
   },
 });

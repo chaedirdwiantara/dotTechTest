@@ -17,6 +17,7 @@ import {color} from '../../../theme';
 interface ButtonProps {
   label: string;
   type?: string;
+  bgColor?: string;
   borderColor?: string;
   containerStyles?: ViewStyle;
   textStyles?: TextStyle | undefined;
@@ -29,6 +30,7 @@ export const Button: React.FC<ButtonProps> = (props: ButtonProps) => {
   const {
     type,
     label,
+    bgColor,
     borderColor,
     containerStyles,
     textStyles,
@@ -45,13 +47,13 @@ export const Button: React.FC<ButtonProps> = (props: ButtonProps) => {
 
   return (
     <TouchableOpacity
-      style={[styles.root, withBorder, containerStyles]}
+      style={[styles(bgColor).root, withBorder, containerStyles]}
       disabled={disabled}
       testID={'ssu-button'}
       onPress={onPress}>
-      <View style={styles.childrenContainer}>
+      <View style={styles().childrenContainer}>
         {!isLoading ? (
-          <Text style={[styles.labelStyle, textStyles]}>{label}</Text>
+          <Text style={[styles().labelStyle, textStyles]}>{label}</Text>
         ) : (
           <ActivityIndicator size="small" color={color.Neutral[10]} />
         )}
@@ -60,24 +62,25 @@ export const Button: React.FC<ButtonProps> = (props: ButtonProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  root: {
-    width: widthResponsive(279),
-    height: undefined,
-    aspectRatio: widthResponsive(279 / 40),
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Color.Success[400],
-  },
-  labelStyle: {
-    fontSize: mvs(12),
-    color: Color.Neutral[10],
-    fontFamily: Font.InterMedium,
-  },
-  childrenContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const styles = (bgColor?: string) =>
+  StyleSheet.create({
+    root: {
+      width: widthResponsive(279),
+      height: undefined,
+      aspectRatio: widthResponsive(279 / 40),
+      borderRadius: 4,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: bgColor ?? Color.Success[400],
+    },
+    labelStyle: {
+      fontSize: mvs(12),
+      color: Color.Neutral[10],
+      fontFamily: Font.InterMedium,
+    },
+    childrenContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });

@@ -1,33 +1,60 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {FlatList, StyleSheet, View} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {color} from '../theme';
 import {widthResponsive} from '../utils';
-import {Gap, SearchBar} from '../components';
-import ListSearch from '../components/molecule/Search/listSearch';
+import {TopNavigation} from '../components';
+import {getList} from '../hooks/use-storage.hook';
+import ListDataCard from '../components/molecule/ListData';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParams} from '../navigations';
+
+type stateProps = {
+  id: number;
+  imageUrl: string;
+  name: string;
+};
 
 const FeedScreen = () => {
-  const [state, setState] = useState<string>('');
-  const [triggerSuggest, setTriggerSuggest] = useState<boolean>(false);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
-  useEffect(() => {
-    if (state.length > 0) {
-      setTriggerSuggest(true);
-    }
-  }, [state]);
+  const [data, setData] = useState<stateProps[]>();
+
+  useFocusEffect(
+    useCallback(() => {
+      setData(getList());
+    }, []),
+  );
+
+  const handleOnPress = (mal_id: number) => {
+    navigation.navigate('DetailData', {id: mal_id});
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={{color: 'white'}}>Search Employee</Text>
-      <Gap height={16} />
-      <SearchBar
-        value={state}
-        onChangeText={(newText: string) => setState(newText)}
-        // onSubmitEditing={() => setForTrigger(true)}
-        rightIcon={state !== '' && true}
-        reset={() => setState('')}
+      <TopNavigation.Type2
+        title="Favorites"
+        itemStrokeColor={color.Neutral[10]}
       />
-      <Gap height={16} />
-      {triggerSuggest && <ListSearch keyword={state} />}
+      <View style={styles.bodyContainer}>
+        {data && (
+          <FlatList
+            data={data}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContainer}
+            numColumns={2}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({item}) => (
+              <ListDataCard
+                name={item.name}
+                imageUrl={item.imageUrl}
+                onPress={() => handleOnPress(item.id)}
+              />
+            )}
+          />
+        )}
+      </View>
     </View>
   );
 };
@@ -38,8 +65,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: color.Dark[800],
-    padding: widthResponsive(20),
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  bodyContainer: {
+    flex: 1,
+    padding: widthResponsive(20),
+  },
+  listContainer: {
+    marginTop: widthResponsive(20),
   },
 });

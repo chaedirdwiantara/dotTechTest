@@ -56,7 +56,7 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <TopNavigation.Type2
-        title="List Employee"
+        title="List Anime"
         itemStrokeColor={color.Neutral[10]}
       />
       {isLoading && listData.length == 0 && <LoadingIndicator size="large" />}
@@ -74,7 +74,8 @@ const HomeScreen = () => {
           keyExtractor={(_, index) => index.toString()}
           renderItem={({item, index}) => (
             <ListDataCard
-              data={item}
+              name={item.title}
+              imageUrl={item.images.jpg.image_url}
               onPress={() => handleOnPress(item.mal_id)}
             />
           )}

@@ -78,8 +78,8 @@ const TabScreen = () => {
         options={{
           tabBarIcon: ({color}) => (
             <View style={styles.root}>
-              <SearchIcon stroke={color} />
-              <Text style={[styles.label, {color}]}>{'Search'}</Text>
+              <FeedIcon stroke={color} />
+              <Text style={[styles.label, {color}]}>{'Favorites'}</Text>
             </View>
           ),
         }}
