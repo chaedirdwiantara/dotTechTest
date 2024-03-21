@@ -16,7 +16,13 @@ import {
 } from '@react-navigation/native-stack';
 import {RootStackParams} from '../../navigations';
 import {mvs} from 'react-native-size-matters';
-import {Button, Gap, LoadingIndicator, TopNavigation} from '../../components';
+import {
+  Button,
+  EmptyState,
+  Gap,
+  LoadingIndicator,
+  TopNavigation,
+} from '../../components';
 import {useDetailDataHook} from '../../hooks/use-dataDetail.hook';
 import FastImage from 'react-native-fast-image';
 import {StarIcon} from '../../assets/icon';
@@ -78,7 +84,7 @@ const DetailData = ({route}: PostDetailProps) => {
         leftIconAction={leftIconOnPress}
         itemStrokeColor={color.Neutral[10]}
       />
-      {detailData && (
+      {detailData && !isError ? (
         <ScrollView style={styles.bodyContainer}>
           <FastImage
             style={{width: '100%', height: 250, borderRadius: 10}}
@@ -115,6 +121,8 @@ const DetailData = ({route}: PostDetailProps) => {
           <Gap height={10} />
           <Text style={styles.textStyle}>{detailData.background}</Text>
         </ScrollView>
+      ) : (
+        <EmptyState text="Error" subtitle="Oops there is something error" />
       )}
       {isLoading && <LoadingIndicator />}
     </View>

@@ -1,8 +1,8 @@
-import {FlatList, StyleSheet, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {color} from '../theme';
 import {widthResponsive} from '../utils';
-import {TopNavigation} from '../components';
+import {EmptyState, TopNavigation} from '../components';
 import {getList} from '../hooks/use-storage.hook';
 import ListDataCard from '../components/molecule/ListData';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -52,6 +52,12 @@ const FeedScreen = () => {
                 onPress={() => handleOnPress(item.id)}
               />
             )}
+            ListEmptyComponent={
+              <EmptyState
+                text="No Favorites data"
+                subtitle="Try to add favorites from detail"
+              />
+            }
           />
         )}
       </View>

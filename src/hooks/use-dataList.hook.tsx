@@ -36,6 +36,7 @@ export const uselistDataHook = () => {
       }
     } catch (err) {
       console.log(err);
+      setIsError(true);
     } finally {
       setIsLoading(false);
     }
@@ -44,6 +45,7 @@ export const uselistDataHook = () => {
   return {
     isLoading,
     listData,
+    isError,
     stopPagination,
     getlistData,
   };

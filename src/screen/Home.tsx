@@ -2,7 +2,7 @@ import {FlatList, RefreshControl, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {color} from '../theme';
 import {widthResponsive} from '../utils';
-import {LoadingIndicator, TopNavigation} from '../components';
+import {EmptyState, LoadingIndicator, TopNavigation} from '../components';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParams} from '../navigations';
@@ -12,7 +12,8 @@ import {uselistDataHook} from '../hooks/use-dataList.hook';
 const HomeScreen = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
-  const {isLoading, listData, stopPagination, getlistData} = uselistDataHook();
+  const {isLoading, listData, isError, stopPagination, getlistData} =
+    uselistDataHook();
   const [meta, setMeta] = useState<{page: number; limit: number}>({
     page: 1,
     limit: 15,
@@ -66,27 +67,31 @@ const HomeScreen = () => {
             <LoadingIndicator size="small" />
           </View>
         )}
-        <FlatList
-          data={listData}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContainer}
-          numColumns={2}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={({item, index}) => (
-            <ListDataCard
-              name={item.title}
-              imageUrl={item.images.jpg.image_url}
-              onPress={() => handleOnPress(item.mal_id)}
-            />
-          )}
-          onEndReached={handleEndScroll}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => setRefreshing(true)}
-            />
-          }
-        />
+        {!isError ? (
+          <FlatList
+            data={listData}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContainer}
+            numColumns={2}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({item, index}) => (
+              <ListDataCard
+                name={item.title}
+                imageUrl={item.images.jpg.image_url}
+                onPress={() => handleOnPress(item.mal_id)}
+              />
+            )}
+            onEndReached={handleEndScroll}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => setRefreshing(true)}
+              />
+            }
+          />
+        ) : (
+          <EmptyState text="Error" subtitle="Oops there is something error" />
+        )}
       </View>
     </View>
   );
