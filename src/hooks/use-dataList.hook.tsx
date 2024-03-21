@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {dataList} from '../interface/dataList.interface';
-import {getListDataEP} from '../api/listEmployee.api';
+import {getListDataEP} from '../api/listData';
 
 export const uselistDataHook = () => {
   const [listData, setlistData] = useState<dataList[]>([]);
